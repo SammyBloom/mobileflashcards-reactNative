@@ -1,13 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import AddCard from './src/screens/AddCard';
+import { Provider as PaperProvider } from 'react-native-paper';
+import { StyleSheet, Text, View } from "react-native"; 
+import { theme } from './src/utils/theme';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <PaperProvider theme={theme}>
+      <View style={styles.container}>
+        <AddCard/>
+      </View>
+    </PaperProvider>
+    
   );
 }
 
