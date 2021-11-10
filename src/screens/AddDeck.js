@@ -39,7 +39,7 @@ render() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 20,
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   cardContent: {
-    paddingTop: 25,
-    paddingBottom: 25
+    paddingTop: 30,
+    paddingBottom: 30
   }
 });
