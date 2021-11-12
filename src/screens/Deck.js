@@ -1,27 +1,53 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Button as PaperButton, Colors } from "react-native-paper";
-import TextHeader from '../components/TextHeader'
 import Button from '../components/Button'
+import { connect } from "react-redux";
+import { removeDeck } from "../actions/index";
+import { removeDeckAsync } from "../utils/api";
+import { NavigationActions } from "react-navigation";
+import PropTypes  from 'prop-types'
+import DeckComp from '../components/DeckComp'
 
 
-export default class Deck extends React.Component{
+export class Deck extends React.Component{
+    static propTypes = {
+        navigation: PropTypes.object.isRequired,
+        removeDeck: PropTypes.func.isRequired,
+        deck: PropTypes.object
+    };
+    shouldComponentUpdate(nextProps) {
+        return nextProps.deck !== undefined;
+    }
+      
+    handleDelete = id => {
+        const { removeDeck, navigation } = this.props;
+    
+        removeDeck(id);
+        removeDeckAsync(id);
+    
+        navigation.goBack();
+    };
     render(){
+        const { deck } = this.props
         return(
             <View style={styles.container}>
-                {/* Omiplement TextHeader for title of deck */}
-                <TextHeader>Programming</TextHeader>
+                <DeckComp id={deck.title}/>
                 <Button
                     mode="outlined"
-                    // disabled={deck.questions.length > 0 ? false : true}
-                    // Implement onPress for start quiz button
+                    disabled={deck.questions.length > 0 ? false : true}
+                    onPress={() =>
+                        this.props.navigation.navigate('Quiz', { title: deck.title })
+                    }
                 >
                     Start Quiz
                 </Button>
 
                 <Button
                     mode="contained"
-                    // Implement onPress to navigate to New Card
+                    onPress={() =>
+                        this.props.navigation.navigate('AddCard', { title: deck.title })
+                    }
                 >
                     Add New Card
                 </Button>
@@ -29,7 +55,7 @@ export default class Deck extends React.Component{
                 <PaperButton
                     labelStyle={styles.buttonDeleteDeckLabel}
                     mode="text"
-                    // Implement onPress to Delete deck
+                    onPress={() => this.handleDelete(deck.title)}
                 >
                     Delete Deck
                 </PaperButton>
@@ -53,3 +79,17 @@ const styles = StyleSheet.create({
       textTransform: "none"
     }
 });
+
+const mapStateToProps = (state, { navigation }) => {
+    const title = navigation.getParam('title', 'undefined');
+    const deck = state[title];
+  
+    return {
+      deck
+    };
+};
+  
+export default connect(
+    mapStateToProps,
+    { removeDeck }
+)(Deck);

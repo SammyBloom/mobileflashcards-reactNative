@@ -6,9 +6,11 @@ import { Card } from "react-native-paper";
 import TextHeader from '../components/TextHeader'
 import Button from '../components/Button'
 import TextInput from '../components/TextInput'
-// import { connect } from "react-redux";
+import { connect } from "react-redux";
+import { addCardToDeck } from "../actions";
+import { addCardToDeckAsync } from "../utils/api";
 
-export default class AddCard extends React.Component {
+export class AddCard extends React.Component {
     static propTypes = {
         navigation: PropTypes.object.isRequired,
         title: PropTypes.string.isRequired,
@@ -26,19 +28,21 @@ export default class AddCard extends React.Component {
     };
     handleSubmit = () => {
         // Start implementing Navigation and adding of cards function
-
-        // const card = {
-        //   question: this.state.question,
-        //   answer: this.state.answer
-        // };
+        const { addCardToDeck, title, navigation} = this.props;
+        const card = {
+          question: this.state.question,
+          answer: this.state.answer
+        };
 
         if (!question || !answer) {
             return alert("Please Enter all the fields");
         }
+
+        addCardToDeck(title, card);
+        addCardToDeckAsync(title, card);
     
-        // Implement adding of cards in the DB and App
-    
-        // Handle Navigation
+        this.setState({ question: '', answer: ''});
+        navigation.goBack();
     };
     render() {
         return (
@@ -71,7 +75,6 @@ export default class AddCard extends React.Component {
                     <Card.Actions>
                       <Button
                         mode="contained"
-                        style={styles.button}
                         onPress={this.handleSubmit}
                         disabled={this.state.question === '' || this.state.answer === ''}>
                           Add New Card
@@ -103,6 +106,12 @@ const styles = StyleSheet.create({
     }
 });    
     
-// Implement mapStateToProps
+const mapStateToProps = (state, { navigation }) => {
+  const title = navigation.getParam('title', 'undefined');
 
-// Export addCard with connect
+  return{
+    title
+  };
+}
+
+export default connect(mapStateToProps, { addCardToDeck })(AddCard)

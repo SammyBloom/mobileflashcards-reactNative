@@ -1,33 +1,63 @@
 import React from "react";
-import { StyleSheet, ScrollView, TouchableOpacity, View } from "react-native";
+import { StyleSheet, ScrollView, TouchableOpacity, View, SafeAreaView } from "react-native";
 import { Card, Divider, Colors, Avatar, FAB } from "react-native-paper";
+import DeckComp from "../components/DeckComp";
+import { handleInitialData } from "../actions/index";
+import PropTypes from 'prop-types'
+import { connect } from "react-redux";
+export class ListDeck extends React.Component {
+  static propTypes = {
+    navigation: PropTypes.object.isRequired,
+    handleInitialData: PropTypes.func.isRequired,
+    decks: PropTypes.object.isRequired
+  };
+  componentDidMount() {
+    this.props.handleInitialData();
+  }
 
-export default class ListDeck extends React.Component {
-    render() {
-        return(
-            <View>
-                <ScrollView>
-                    {/* Implement displaying each deck */}
-                <TouchableOpacity>
-                    <Card.Title
-                        title="This is the Title"
-                        right={props => (
-                        <Avatar.Text
-                        size={24}
-                        style={styles.avatarText}
-                        //   Implement label
-                        label="4"/>
-                        )}
-                    />
-                    <Divider />
-                </TouchableOpacity>
-                </ScrollView>
-                    <FAB style={styles.fab} icon="plus"
-                        // Implement on Press Functionality
-                    />
-            </View>
-        )
-    }
+  onAddDeck() {
+    this.props.navigation.navigate("AddDeck");
+  }
+
+
+  render() {
+    const { decks, navigation } = this.props;
+    return(
+      <SafeAreaView style={styles.container}>
+        <View style={styles.container} behavior="padding">
+        <ScrollView>
+        {Object.values(decks).map(deck => {
+          return (
+            <TouchableOpacity
+              key={deck.title}
+              onPress={() =>
+              navigation.navigate('Deck', { title: deck.title })}
+            >    
+                
+              <Card.Title
+                title={props => (
+                  <DeckComp id={deck.title}/>
+                )}
+                right={props => (
+                  <Avatar.Text
+                    size={24}
+                    style={styles.avatarText}
+                    label={decks[id].questions.length}
+                  />
+                )}
+              />
+              <Divider />
+            </TouchableOpacity>
+          );
+          })}  
+        </ScrollView>
+        <FAB style={styles.fab} icon="plus"
+          onPress={() => this.onAddDeck()}
+        />
+      </View>
+      </SafeAreaView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
