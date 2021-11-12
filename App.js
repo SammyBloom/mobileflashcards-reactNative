@@ -3,13 +3,13 @@ import React from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { StyleSheet, Text, View } from "react-native"; 
 import { theme } from './src/utils/theme';
-import ListDeck from './src/screens/ListDeck';
+import Quiz from './src/screens/Quiz';
 
 export default function App() {
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
-        <ListDeck/>
+        <Quiz/>
       </View>
     </PaperProvider>
     
