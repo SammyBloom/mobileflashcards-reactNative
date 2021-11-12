@@ -60,7 +60,7 @@ export class Deck extends React.Component{
                     Delete Deck
                 </PaperButton>
           </View>
-        )
+        );
     }
 }
 

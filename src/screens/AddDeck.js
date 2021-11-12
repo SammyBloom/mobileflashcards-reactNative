@@ -77,7 +77,7 @@ export class AddDeck extends React.Component{
           </KeyboardAvoidingView>
         </ScrollView>
       </View>
-    ) 
+    ); 
   }
 
 }

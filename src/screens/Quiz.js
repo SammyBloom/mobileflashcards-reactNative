@@ -1,11 +1,12 @@
 import React from "react";
-import { Card, Colors, Title, Text, IconButton } from "react-native-paper";
-import { StyleSheet, View, ScrollView, ViewPagerAndroidComponent } from "react-native";
+import { Card, Colors, Title, IconButton, Paragraph } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
 import TextHeader from '../components/TextHeader'
 import Button from '../components/Button'
 import TextNormal from '../components/TextNormal'
 import { connect } from "react-redux";
 import PropTypes from 'prop-types' 
+import PagerView from "react-native-pager-view";
 
 const screen = {
     QUESTION: 'question',
@@ -24,7 +25,7 @@ export class Quiz extends React.Component{
       };
 
       state = {
-        display: screen.QUESTION,
+        show: screen.QUESTION,
         correct: 0,
         incorrect: 0,
         page: 0,
@@ -34,7 +35,7 @@ export class Quiz extends React.Component{
 
       handlePageChange = evt => {
         this.setState({
-          display: screen.QUESTION,
+          show: screen.QUESTION,
           page: evt.nativeEvent.position
         });
       };
@@ -57,23 +58,26 @@ export class Quiz extends React.Component{
         const numQuestions = questions.length - 1;
     
         if (numQuestions === correct + incorrect) {
-          this.setState({ display: screen.RESULT });
+          this.setState({ show: screen.RESULT });
         }
       };
 
       handleReset = () => {
         this.setState(prevState => ({
-          display: screen.QUESTION,
+          show: screen.QUESTION,
           correct: 0,
           incorrect: 0,
-          // answered: Array(Object.values(this.props.decks)[2].questions.length).fill(
           answered: Array(prevState.questions).fill(0)
         }));
       };
 
+      handleShowAnswer = () =>{
+          
+      }
+
     render(){
         const { decks } = this.props;
-        const { display } = this.props;
+        const { show } = this.props;
         const questions = Object.values(decks)[2].questions;
 
         if (this.state.display === screen.RESULT){
@@ -101,26 +105,44 @@ export class Quiz extends React.Component{
         }
 
         return(
-            <ViewPagerAndroidComponent
+            <PagerView
             style={styles.container}
             scrollEnabled={true}
             onPageSelected={this.handlePageChange}
             >
-                {questions.map((questions, idx) => (
+                {questions.map((question, idx) => (
                     <View style={styles.container2}>
                     <View style={styles.container}>
                         <Card style={styles.card}>
                             <Card.Content>
                                 <Title style={styles.quiz}>
-                                    {display === screen.QUESTION ? 'Question' : 'Answer'}
+                                    {show === screen.QUESTION ? 'Question' : 'Answer'}
                                 </Title>
+                                <Paragraph>
+                                    {show === screen.QUESTION
+                                    ? question.question
+                                    : question.answer}
+                                </Paragraph>
                             </Card.Content>
                         </Card>
                         <TextNormal style={styles.    remainingQuestionText}>
-                            {display === screen.QUESTION
-                            ? question.question
-                            : question.answer}  
+                            {idx + 1} / {questions.length} remaining. 
                         </TextNormal>
+                        {show === screen.QUESTION ? (
+                        <Button
+                            mode="contained"
+                            onPress={() => this.setState({ show: screen.ANSWER })}
+                        >
+                                Answer
+                        </Button>
+                        ) : (
+                        <Button
+                            mode="contained"
+                            onPress={() => this.setState({ show: screen.QUESTION })}
+                        >
+                            Question
+                        </Button>
+                        )}
                     </View>
                     <View style={styles.actionContainer}>
                         <IconButton
@@ -143,8 +165,8 @@ export class Quiz extends React.Component{
                 </View>
                 ))}
 
-            </ViewPagerAndroidComponent>
-        )
+            </PagerView>
+        );
 
     }
 }
@@ -153,7 +175,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 2,
       justifyContent: "center",
-      marginTop: 120,
+      marginTop: 100,
       alignItems: "center"
     },
     container2: {

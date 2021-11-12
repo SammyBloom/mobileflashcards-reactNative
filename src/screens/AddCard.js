@@ -7,7 +7,7 @@ import TextHeader from '../components/TextHeader'
 import Button from '../components/Button'
 import TextInput from '../components/TextInput'
 import { connect } from "react-redux";
-import { addCardToDeck } from "../actions";
+import { addCardToDeck } from "../actions/index";
 import { addCardToDeckAsync } from "../utils/api";
 
 export class AddCard extends React.Component {
@@ -89,20 +89,20 @@ export class AddCard extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10,
-        alignSelf: "center",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    card: {
-        flex: 1
-    },
-    cardContent: {
-        paddingTop: 30,
-        paddingBottom: 30
-    }
+  container: {
+    flex: 1,
+    padding: 10,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  card: {
+    flex: 1
+  },
+  cardContent: {
+    paddingTop: 30,
+    paddingBottom: 30
+  }
 });    
     
 const mapStateToProps = (state, { navigation }) => {
