@@ -7,7 +7,8 @@ import TextInput from '../components/TextInput'
 import { addDeck } from "../actions";
 import { StackActions, NavigationActions } from 'react-navigation'
 import { saveDeckTitleAsync } from "../utils/api";
-import PropTypes from 'prop-types' 
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 export class AddDeck extends React.Component{
 
@@ -38,7 +39,7 @@ export class AddDeck extends React.Component{
       actions: [
         NavigationActions.navigate({ routeName: 'Home' }),
         NavigationActions.navigate({
-          routeName: 'DeckDetail',
+          routeName: 'Deck',
           params: { title: text }
         })
       ]

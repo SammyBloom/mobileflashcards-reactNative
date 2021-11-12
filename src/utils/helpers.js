@@ -1,6 +1,6 @@
 import React from 'react';
-import { AsyncStorage } from '@react-native-async-storage/async-storage';
-import { Notifications } from 'expo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Notifications from 'expo';
 import * as Permissions from 'expo-permissions';
 
 const NOTIFICATION_KEY = 'Flashcard_notifications';
@@ -41,7 +41,7 @@ export function setLocalNotification() {
   AsyncStorage.getItem(NOTIFICATION_KEY)
     .then(JSON.parse)
     .then(data => {
-      // if (true) 
+       
       if (data === null) {
         Permissions.askAsync(Permissions.NOTIFICATIONS).then(({ status }) => {
           if (status === 'granted') {

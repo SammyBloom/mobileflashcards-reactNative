@@ -35,14 +35,12 @@ export class ListDeck extends React.Component {
             >    
                 
               <Card.Title
-                title={props => (
-                  <DeckComp id={deck.title}/>
-                )}
+                title={decks[deck.title].title}
                 right={props => (
                   <Avatar.Text
                     size={24}
                     style={styles.avatarText}
-                    label={decks[id].questions.length}
+                    label={decks[deck.title].questions.length}
                   />
                 )}
               />
@@ -82,3 +80,10 @@ const styles = StyleSheet.create({
       backgroundColor: Colors.pink100
     }
   });
+
+const mapStateToProps = state => ({ decks: state });
+
+export default connect(
+  mapStateToProps,
+  { handleInitialData }
+)(ListDeck);

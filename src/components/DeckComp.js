@@ -2,10 +2,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import { white, textGray } from '../utils/colors';
 import { connect } from 'react-redux';
 import TextHeader from './TextHeader';
 import TextNormal from './TextNormal';
+import { Colors } from 'react-native-paper';
 
 const DeckComp = props => {
   const { deck } = props;
@@ -34,15 +34,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexBasis: 120,
     minHeight: 120,
-    borderWidth: 1,
-    borderColor: '#aaa',
-    backgroundColor: white,
-    borderRadius: 5,
-    marginBottom: 10
   },
   cardText: {
     fontSize: 18,
-    color: textGray
+    color: Colors.grey200
   }
 });
 

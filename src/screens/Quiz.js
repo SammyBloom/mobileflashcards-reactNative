@@ -1,78 +1,151 @@
 import React from "react";
 import { Card, Colors, Title, Text, IconButton } from "react-native-paper";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ScrollView, ViewPagerAndroidComponent } from "react-native";
 import TextHeader from '../components/TextHeader'
 import Button from '../components/Button'
 import TextNormal from '../components/TextNormal'
+import { connect } from "react-redux";
+import PropTypes from 'prop-types' 
 
+const screen = {
+    QUESTION: 'question',
+    ANSWER: 'answer',
+    RESULT: 'result'
+};
 
 const answer = {
     CORRECT: 'correct',
     INCORRECT: 'incorrect'
 };
 
-export default class Quiz extends React.Component{
-    render(){
+export class Quiz extends React.Component{
+    static propTypes = {
+        decks: PropTypes.object.isRequired
+      };
+
+      state = {
+        display: screen.QUESTION,
+        correct: 0,
+        incorrect: 0,
+        page: 0,
+        questions: Object.values(this.props.decks)[2].questions.length,
+        answered: Array(Object.values(this.props.decks)[2].questions.length).fill(0)
+      };
+
+      handlePageChange = evt => {
+        this.setState({
+          display: screen.QUESTION,
+          page: evt.nativeEvent.position
+        });
+      };
+
+      handleAnswer = response => {
+        const { decks } = this.props;
+        if (response === answer.CORRECT) {
+          this.setState(prevState => ({ correct: prevState.correct + 1 }));
+        } else {
+          this.setState(prevState => ({ incorrect: prevState.incorrect + 1 }));
+        }
+        this.setState(prevState => ({
+          answered: prevState.answered.map((val, idx) =>
+            prevState.page === idx ? 1 : val
+          )
+        }));
+    
         const { correct, incorrect } = this.state;
-        const total = correct + incorrect;
-        const percent = ((correct / total) * 100).toFixed(0);
-        const resultStyle =
-        percent >= 70 ? styles.resultTextGood : styles.resultTextBad;
-        // return(
-        //     <View>
-        //         <View style={styles.container}>
-        //             <Card style={styles.card}>
-        //                 <Card.Content>
-        //                     <Title style={styles.quiz}>
-        //                         {/* Implement the question here */}
-        //                         What is the question?
-        //                     </Title>
-        //                 </Card.Content>
-        //             </Card>
-        //             <Text style={styles.    remainingQuestionText}>
-        //                 {/* Implement the remaining question here */}
-        //                 {/* {this.props.deck.questions.length - questionIndex}{" "}
-        //                 {this.props.deck.questions.length - questionIndex > 1
-        //                     ? "questions "
-        //                     : "question "} left */}
-        //                  You have 3 questions remaining   
-        //             </Text>
-        //         </View>
-        //         <View style={styles.actionContainer}>
-        //             <IconButton
-        //             icon="checkbox-marked"
-        //             color={Colors.green300}
-        //             size={70}
-        //             style={styles.iconRight}
-        //             // Handle onPress
-        //             />
-        //             <IconButton
-        //             icon="close-box"
-        //             color={Colors.red300}
-        //             size={70}
-        //             style={styles.iconLeft}
-        //             // Handle onPress
-        //             />
-        //         </View>
-        //     </View>
-        // )
+        const questions = Object.values(decks)[2].questions;
+        const numQuestions = questions.length - 1;
+    
+        if (numQuestions === correct + incorrect) {
+          this.setState({ display: screen.RESULT });
+        }
+      };
+
+      handleReset = () => {
+        this.setState(prevState => ({
+          display: screen.QUESTION,
+          correct: 0,
+          incorrect: 0,
+          // answered: Array(Object.values(this.props.decks)[2].questions.length).fill(
+          answered: Array(prevState.questions).fill(0)
+        }));
+      };
+
+    render(){
+        const { decks } = this.props;
+        const { display } = this.props;
+        const questions = Object.values(decks)[2].questions;
+
+        if (this.state.display === screen.RESULT){
+            const { correct, incorrect } = this.state;
+            const total = correct + incorrect;
+            const percent = ((correct / total) * 100).toFixed(0);
+            const resultStyle =
+            percent >= 70 ? styles.resultTextGood : styles.resultTextBad;
+            return(
+                <View style={styles.quizCompleteContainer}>
+                    <TextHeader >Quiz Complete !!!</TextHeader>
+                    <TextNormal style={resultStyle}>You got {correct} / {total} correct.</TextNormal>
+                    <TextNormal style={resultStyle}>Score is {percent}%</TextNormal>
+                    <Button mode="contained" onPress={this.handleReset}>
+                        Restart Quiz
+                    </Button>
+
+                    <Button mode="outlined"
+                    onPress={() => this.props.navigation.goBack()}
+                    >
+                        Go Back to Deck
+                    </Button>
+                </View>
+            );
+        }
 
         return(
-            <View style={styles.quizCompleteContainer}>
-                <TextHeader >Quiz Complete !!!</TextHeader>
-                <TextNormal style={resultStyle}>You got {correct} / {total} correct.</TextNormal>
-                <TextNormal style={resultStyle}>Score is {percent}%</TextNormal>
-                <Button mode="contained" onPress={this.handleReset}>
-                    Restart Quiz
-                </Button>
+            <ViewPagerAndroidComponent
+            style={styles.container}
+            scrollEnabled={true}
+            onPageSelected={this.handlePageChange}
+            >
+                {questions.map((questions, idx) => (
+                    <View style={styles.container2}>
+                    <View style={styles.container}>
+                        <Card style={styles.card}>
+                            <Card.Content>
+                                <Title style={styles.quiz}>
+                                    {display === screen.QUESTION ? 'Question' : 'Answer'}
+                                </Title>
+                            </Card.Content>
+                        </Card>
+                        <TextNormal style={styles.    remainingQuestionText}>
+                            {display === screen.QUESTION
+                            ? question.question
+                            : question.answer}  
+                        </TextNormal>
+                    </View>
+                    <View style={styles.actionContainer}>
+                        <IconButton
+                        icon="checkbox-marked"
+                        color={Colors.green300}
+                        size={70}
+                        style={styles.iconRight}
+                        onPress={() => this.handleAnswer(answer.CORRECT)}
+                        disabled={this.state.answered[idx] === 1}
+                        />
+                        <IconButton
+                        icon="close-box"
+                        color={Colors.red300}
+                        size={70}
+                        style={styles.iconLeft}
+                        onPress={() => this.handleAnswer(answer.INCORRECT)}
+                        disabled={this.state.answered[idx] === 1}
+                        />
+                    </View>
+                </View>
+                ))}
 
-                <Button mode="outlined"
-                // onPress={() => this.props.navigation.goBack()}
-                >
-                    Go Back to Deck
-                </Button>
-            </View>
+            </ViewPagerAndroidComponent>
         )
+
     }
 }
 
@@ -82,6 +155,14 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       marginTop: 120,
       alignItems: "center"
+    },
+    container2: {
+        flex: 1,
+        paddingTop: 16,
+        paddingLeft: 16,
+        paddingRight: 16,
+        paddingBottom: 16,
+        justifyContent: 'space-around'
     },
     actionContainer: {
       flexDirection: "row",  
@@ -145,4 +226,13 @@ const styles = StyleSheet.create({
         color: Colors.red200,
       }
   });
+
+const mapStateToProps = state => ({ decks: state });
+
+const mapDispatchToProps = {};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Quiz);
   
