@@ -52,4 +52,4 @@ You will also see any lint errors in the console.
 
 ## Note
 
-This project was bootstrapped with [Create React App](https://github.com/expo/create-react-native-app).
+This project was bootstrapped with [Create React Native App](https://github.com/expo/create-react-native-app).
