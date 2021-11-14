@@ -91,3 +91,10 @@ export async function resetDecks() {
     console.log(err);
   }
 }
+
+export function markDateAsQuizAttempted() {
+  let currentDate = new Date()
+  currentDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`
+  AsyncStorage.setItem('dateLatestAttempted', JSON.stringify(currentDate))
+      .then(() => console.log("Date marked as quiz attempted", currentDate))
+}

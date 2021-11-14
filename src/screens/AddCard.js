@@ -34,10 +34,6 @@ export class AddCard extends React.Component {
       answer: this.state.answer
       };
 
-      if (!question || !answer) {
-        return alert("Please Enter all the fields");
-      }
-
       addCardToDeck(title, card);
       addCardToDeckAsync(title, card);
     
